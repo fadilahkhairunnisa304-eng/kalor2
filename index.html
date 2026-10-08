@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LKPD Digital Interaktif Fisika X - Suhu dan Kalor (PBL & WebAR)</title>
+  
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Three.js Library for WebAR Simulation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    .sidebar-btn.active {
+      background-color: #e0f2fe !important;
+      color: #0369a1 !important;
+      font-weight: 700 !important;
+      border-right: 4px solid #0284c7 !important;
+    }
+    .step-content { display: none; }
+    .step-content.active { display: block; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen flex flex-col overflow-hidden">
+
+  <!-- TOP HEADER -->
+  <header class="bg-gradient-to-r from-sky-700 to-blue-900 text-white px-6 py-3 shadow-md flex justify-between items-center z-20 shrink-0">
+    <div class="flex items-center gap-3">
+      <i class="fa-solid fa-flask-vial text-2xl text-sky-300"></i>
+      <div>
+        <h1 class="text-base font-bold tracking-wide">LKPD Digital Interaktif Fisika X</h1>
+        <p class="text-xs text-sky-200">Materi: Suhu, Kalor & Perpindahan Kalor (PBL & WebAR) | SMA Muhammadiyah 4</p>
+      </div>
+    </div>
+    
+    <!-- Meeting Selector -->
+    <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/20 text-xs">
+      <span class="font-semibold text-sky-200">Pilih Pertemuan:</span>
+      <select id="meeting-select" class="bg-sky-800 text-white font-bold rounded px-2 py-1 outline-none cursor-pointer">
+        <option value="1">Pertemuan 1: Suhu & Skala Suhu</option>
+        <option value="2">Pertemuan 2: Kalor & Perubahan Wujud</option>
+        <option value="3">Pertemuan 3: Perpindahan Kalor</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER: SIDEBAR + CONTENT AREA -->
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- LEFT SIDEBAR NAVIGATION (Format Sesuai Tampilan LKPD Digital) -->
+    <aside class="w-72 bg-white border-r border-slate-200 overflow-y-auto flex flex-col shrink-0 shadow-sm">
+      <div class="p-4 border-b bg-slate-50">
+        <span class="text-[11px] font-bold tracking-wider text-slate-400 uppercase">Tahapan LKPD</span>
+        <h2 id="sidebar-meeting-title" class="text-sm font-bold text-slate-800">Pertemuan 1</h2>
+      </div>
+
+      <nav class="flex-1 py-2 text-xs font-medium space-y-0.5" id="sidebar-menu">
+        <button data-step="1" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 transition active">
+          <span class="w-5 text-center font-bold">1.</span> Cover & Judul
+        </button>
+        <button data-step="2" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">2.</span> Identitas Peserta Didik
+        </button>
+        <button data-step="3" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">3.</span> Tujuan Pembelajaran
+        </button>
+        <button data-step="4" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">4.</span> Petunjuk Penggunaan
+        </button>
+        <button data-step="5" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">5.</span> Orientasi Masalah
+        </button>
+        <button data-step="6" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">6.</span> Ayo Mengamati
+        </button>
+        <button data-step="7" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">7.</span> Laboratorium WebAR
+        </button>
+        <button data-step="8" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">8.</span> Data Percobaan
+        </button>
+        <button data-step="9" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">9.</span> Pertanyaan Analisis
+        </button>
+        <button data-step="10" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">10.</span> Ayo Berdiskusi
+        </button>
+        <button data-step="11" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">11.</span> Ayo Menyimpulkan
+        </button>
+        <button data-step="12" class="sidebar-btn w-full text-left px-4 py-3 flex items-center gap-3 text-slate-600 hover:bg-slate-50 transition">
+          <span class="w-5 text-center font-bold">12.</span> Latihan & Refleksi
+        </button>
+      </nav>
+    </aside>
+
+    <!-- RIGHT CONTENT AREA -->
+    <main class="flex-1 bg-slate-50 overflow-y-auto p-6 md:p-8">
+      <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+
+        <!-- STEP 1: COVER & JUDUL -->
+        <div id="step-1" class="step-content active space-y-6 text-center py-8">
+          <div class="inline-block bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full">
+            LKPD FISIKA BERBASIS PBL & WEBAR
+          </div>
+          <h1 id="cover-title" class="text-3xl font-extrabold text-slate-900 leading-tight">
+            EKSPERIMEN VIRTUAL SUHU DAN SKALA THERMOMETER
+          </h1>
+          <p class="text-slate-600 text-sm max-w-xl mx-auto">
+            Media Pembelajaran Interaktif Fisika Kelas X SMA Muhammadiyah 4 Bandung.<br>
+            Guru Pengampu: Khairunnisa Nurfadilah, S.Pd.
+          </p>
+          <div class="pt-6">
+            <button onclick="goToStep(2)" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-8 py-3 rounded-lg shadow-md transition">
+              Mulai Pembelajaran <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: IDENTITAS PESERTA DIDIK -->
+        <div id="step-2" class="step-content space-y-6">
+          <div class="border-b pb-3">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-regular fa-id-card text-sky-600"></i> Identitas Peserta Didik
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">Silakan isi identitas diri kamu sebelum memulai kegiatan eksplorasi LKPD ini.</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap</label>
+              <input type="text" id="id-nama" class="w-full border rounded-lg p-2.5 outline-sky-500" placeholder="Contoh: Budi Santoso">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Kelas / Nomor Absen</label>
+              <input type="text" id="id-kelas" class="w-full border rounded-lg p-2.5 outline-sky-500" placeholder="Contoh: X MIPA 2 / 12">
+            </div>
+            <div class="md:col-span-2">
+              <label class="block font-semibold text-slate-700 mb-1">Nama Sekolah / Kelompok</label>
+              <input type="text" id="id-sekolah" class="w-full border rounded-lg p-2.5 outline-sky-500" placeholder="Contoh: SMA Muhammadiyah 4 / Kelompok 3">
+            </div>
+          </div>
+
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(1)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="goToStep(3)" class="bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-sky-700">Lanjut</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: TUJUAN PEMBELAJARAN -->
+        <div id="step-3" class="step-content space-y-6">
+          <div class="border-b pb-3">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-bullseye text-sky-600"></i> Tujuan Pembelajaran
+            </h2>
+          </div>
+          <ul id="tujuan-list" class="list-disc list-inside space-y-2 text-sm text-slate-700 bg-sky-50 p-4 rounded-lg border border-sky-100">
+          </ul>
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(2)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="goToStep(4)" class="bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-sky-700">Lanjut</button>
+          </div>
+        </div>
+
+        <!-- STEP 4: PETUNJUK PENGGUNAAN -->
+        <div id="step-4" class="step-content space-y-6">
+          <div class="border-b pb-3">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-circle-info text-sky-600"></i> Petunjuk Penggunaan
+            </h2>
+          </div>
+          <ol class="list-decimal list-inside space-y-2 text-sm text-slate-700">
+            <li>Pahami konteks masalah yang disajikan pada menu Orientasi Masalah.</li>
+            <li>Gunakan simulasi Laboratorium WebAR di menu nomor 7 untuk melakukan pengamatan virtual.</li>
+            <li>Catat hasil simulasi secara teliti pada Tabel Data Percobaan.</li>
+            <li>Jawablah pertanyaan analisis dan diskusikan bersama teman kelompok Anda.</li>
+            <li>Kerjakan latihan soal formatif di bagian akhir untuk menguji pemahaman Anda.</li>
+          </ol>
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(3)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="goToStep(5)" class="bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-sky-700">Lanjut</button>
+          </div>
+        </div>
+
+        <!-- STEP 5: ORIENTASI MASALAH -->
+        <div id="step-5" class="step-content space-y-6">
+          <div class="border-b pb-3">
+            <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Tahap 1 PBL: Orientasi Masalah</span>
+            <h2 id="orientasi-title" class="text-xl font-bold text-slate-800">Sensasi Indra Peraba vs Pengukuran Objektif</h2>
+          </div>
+          <div id="orientasi-text" class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg text-sm text-slate-800 leading-relaxed">
+          </div>
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(4)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="goToStep(6)" class="bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-sky-700">Lanjut</button>
+          </div>
+        </div>
+
+        <!-- STEP 6: AYO MENGAMATI -->
+        <div id="step-6" class="step-content space-y-6">
+          <div class="border-b pb-3">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-eye text-sky-600"></i> Ayo Mengamati
+            </h2>
+          </div>
+          <p id="mengamati-desc" class="text-sm text-slate-700 leading-relaxed">
+          </p>
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(5)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="goToStep(7)" class="bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-sky-700">Lanjut ke WebAR</button>
+          </div>
+        </div>
+
+        <!-- STEP 7: LABORATORIUM WEBAR -->
+        <div id="step-7" class="step-content space-y-6">
+          <div class="border-b pb-3 flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-cube text-sky-600"></i> Laboratorium WebAR Interaktif
+              </h2>
+              <p class="text-xs text-slate-500">Ubah parameter slider di bawah untuk mengamati perubahan simulasi 3D secara real-time.</p>
+            </div>
+            <button id="btn-ar-camera" onclick="toggleARCamera()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
+              <i class="fa-solid fa-camera mr-1"></i> Aktifkan AR Kamera
+            </button>
+          </div>
+
+          <!-- WebAR Canvas Area -->
+          <div class="bg-slate-900 rounded-xl p-4 text-white relative min-h-[350px] flex flex-col justify-between">
+            <div id="webar-canvas-container" class="w-full h-64 bg-slate-950 rounded-lg overflow-hidden relative">
+              <video id="webar-video" class="absolute inset-0 w-full h-full object-cover hidden" autoplay playsinline></video>
+            </div>
+
+            <!-- Dynamic Interactive Controls -->
+            <div id="webar-controls" class="mt-4 bg-slate-800/90 p-4 rounded-lg space-y-3 text-xs">
+            </div>
+          </div>
+
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(6)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="goToStep(8)" class="bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-sky-700">Isi Data Percobaan</button>
+          </div>
+        </div>
+
+        <!-- STEP 8: DATA PERCOBAAN -->
+        <div id="step-8" class="step-content space-y-6">
+          <div class="border-b pb-3 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-table text-sky-600"></i> Data Percobaan
+            </h2>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse border border-slate-300" id="table-data">
+            </table>
+          </div>
+
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(7)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="goToStep(9)" class="bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-sky-700">Lanjut</button>
+          </div>
+        </div>
+
+        <!-- STEP 9: PERTANYAAN ANALISIS -->
+        <div id="step-9" class="step-content space-y-6">
+          <div class="border-b pb-3">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-pen-to-square text-sky-600"></i> Pertanyaan Analisis
+            </h2>
+          </div>
+          <div id="analisis-container" class="space-y-4 text-xs">
+          </div>
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(8)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="goToStep(10)" class="bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-sky-700">Lanjut</button>
+          </div>
+        </div>
+
+        <!-- STEP 10: AYO BERDISKUSI -->
+        <div id="step-10" class="step-content space-y-6">
+          <div class="border-b pb-3">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-comments text-sky-600"></i> Ayo Berdiskusi
+            </h2>
+          </div>
+          <p class="text-xs text-slate-600">Diskusikan hasil temuan Anda dengan anggota kelompok. Bandingkan hasil perhitungan teori dengan hasil pengamatan pada simulasi WebAR.</p>
+          <textarea class="w-full p-3 border rounded-lg text-xs outline-sky-500" rows="4" placeholder="Tuliskan poin-poin hasil diskusi kelompok di sini..."></textarea>
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(9)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="goToStep(11)" class="bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-sky-700">Lanjut</button>
+          </div>
+        </div>
+
+        <!-- STEP 11: AYO MENYIMPULKAN -->
+        <div id="step-11" class="step-content space-y-6">
+          <div class="border-b pb-3">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-sky-600"></i> Ayo Menyimpulkan
+            </h2>
+          </div>
+          <p class="text-xs text-slate-600">Buatlah kesimpulan akhir berdasarkan seluruh tahapan percobaan yang telah Anda lakukan.</p>
+          <textarea class="w-full p-3 border rounded-lg text-xs outline-sky-500" rows="4" placeholder="Tuliskan kesimpulan Anda..."></textarea>
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(10)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="goToStep(12)" class="bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-sky-700">Latihan Soal & Refleksi</button>
+          </div>
+        </div>
+
+        <!-- STEP 12: LATIHAN & REFLEKSI -->
+        <div id="step-12" class="step-content space-y-8">
+          
+          <!-- Penilaian Formatif -->
+          <div class="border border-purple-200 bg-purple-50 p-5 rounded-xl space-y-4">
+            <h3 class="text-md font-bold text-purple-900 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-purple-600"></i> Penilaian Formatif (Soal HOTS Interaktif)
+            </h3>
+            <div id="quiz-container" class="space-y-4 text-xs text-slate-800">
+            </div>
+            <button onclick="checkQuiz()" class="bg-purple-700 hover:bg-purple-800 text-white font-bold px-4 py-2 rounded-lg text-xs transition">
+              Cek Jawaban Formatif
+            </button>
+            <div id="quiz-score" class="hidden text-xs font-bold p-2 rounded bg-white border"></div>
+          </div>
+
+          <!-- Refleksi Peserta Didik -->
+          <div class="border border-teal-200 bg-teal-50 p-5 rounded-xl space-y-3">
+            <h3 class="text-md font-bold text-teal-900 flex items-center gap-2">
+              <i class="fa-solid fa-heart text-teal-600"></i> Refleksi Pembelajaran
+            </h3>
+            <p class="text-xs text-slate-700">Bagaimana perasaan Anda setelah menyelesaikan pembelajaran WebAR hari ini?</p>
+            <div class="flex gap-4 text-2xl">
+              <button onclick="selectEmoji('😕')" class="hover:scale-125 transition">😕</button>
+              <button onclick="selectEmoji('😐')" class="hover:scale-125 transition">😐</button>
+              <button onclick="selectEmoji('🙂')" class="hover:scale-125 transition">🙂</button>
+              <button onclick="selectEmoji('😄')" class="hover:scale-125 transition">😄</button>
+            </div>
+            <textarea class="w-full p-2 border rounded text-xs" rows="2" placeholder="Sebutkan hal menarik atau tantangan yang kamu hadapi..."></textarea>
+          </div>
+
+          <div class="flex justify-between pt-4">
+            <button onclick="goToStep(11)" class="bg-slate-200 text-slate-700 font-semibold px-5 py-2 rounded-lg hover:bg-slate-300">Kembali</button>
+            <button onclick="alert('LKPD dan Refleksi Anda telah berhasil tersimpan!')" class="bg-emerald-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-emerald-700">
+              <i class="fa-solid fa-paper-plane mr-1"></i> Simpan & Selesai
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let currentMeeting = "1";
+    let currentStep = 1;
+
+    // DATA SETIAP PERTEMUAN
+    const meetingData = {
+      "1": {
+        title: "Pertemuan 1: Suhu & Skala Suhu",
+        coverTitle: "EKSPERIMEN VIRTUAL SUHU DAN SKALA THERMOMETER",
+        tujuan: [
+          "Menjelaskan pengertian suhu dan sifat termometrik zat.",
+          "Menganalisis perbedaan skala Celsius, Fahrenheit, Kelvin, dan Reamur.",
+          "Melakukan konversi antar-skala suhu secara akurat melalui simulasi WebAR."
+        ],
+        orientasi: "Seseorang menyentuh air di wadah A dan mengatakan air tersebut terasa hangat, namun orang lain yang menyentuh wadah yang sama mengatakan air terasa panas. Mengapa indra peraba manusia tidak dapat dijadikan skala pengukur suhu yang valid dan objektif?",
+        mengamati: "Amati tampilan 3D Thermometer pada simulasi WebAR. Perhatikan bagaimana tinggi raksa/fluida berubah ketika nilai suhu dinaikkan atau diturunkan.",
+        controlsHTML: `
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-slate-300 mb-1">Pilih Wadah Sample:</label>
+              <select id="p1-sample" onchange="updateP1Sample(this.value)" class="w-full bg-slate-700 text-white rounded p-1">
+                <option value="0">Air Es (0 °C)</option>
+                <option value="25">Air Suhu Ruang (25 °C)</option>
+                <option value="50" selected>Air Hangat (50 °C)</option>
+                <option value="100">Air Panas (100 °C)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-300 mb-1">Skala Tampilan 3D:</label>
+              <select id="p1-skala" class="w-full bg-slate-700 text-white rounded p-1">
+                <option value="C">Celsius (°C)</option>
+                <option value="F">Fahrenheit (°F)</option>
+                <option value="K">Kelvin (K)</option>
+                <option value="R">Reamur (°R)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span>Suhu Celsius:</span>
+              <span id="p1-val" class="text-sky-400 font-bold">50 °C</span>
+            </div>
+            <input type="range" id="p1-slider" min="-10" max="110" value="50" oninput="updateP1Slider(this.value)" class="w-full accent-sky-400">
+          </div>
+          <div class="grid grid-cols-4 gap-1 text-center font-mono text-[10px] bg-slate-950 p-2 rounded border border-slate-700">
+            <div><span class="text-slate-400 block">CELSIUS</span><span id="disp-c">50 °C</span></div>
+            <div><span class="text-slate-400 block">FAHRENHEIT</span><span id="disp-f" class="text-orange-400">122 °F</span></div>
+            <div><span class="text-slate-400 block">KELVIN</span><span id="disp-k" class="text-emerald-400">323.15 K</span></div>
+            <div><span class="text-slate-400 block">REAMUR</span><span id="disp-r" class="text-purple-400">40 °R</span></div>
+          </div>
+        `,
+        tableHeader: `
+          <thead class="bg-slate-100">
+            <tr>
+              <th class="border p-2">No</th>
+              <th class="border p-2">Wadah Benda</th>
+              <th class="border p-2">°C</th>
+              <th class="border p-2">°F</th>
+              <th class="border p-2">K</th>
+              <th class="border p-2">°R</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="border p-2">1</td><td class="border p-2 font-medium">Air Es</td><td class="border p-2">0</td><td class="border p-2">32</td><td class="border p-2">273.15</td><td class="border p-2">0</td></tr>
+            <tr><td class="border p-2">2</td><td class="border p-2 font-medium">Air Suhu Ruang</td><td class="border p-2">25</td><td class="border p-2">77</td><td class="border p-2">298.15</td><td class="border p-2">20</td></tr>
+            <tr><td class="border p-2">3</td><td class="border p-2 font-medium">Air Hangat</td><td class="border p-2">50</td><td class="border p-2">122</td><td class="border p-2">323.15</td><td class="border p-2">40</td></tr>
+            <tr><td class="border p-2">4</td><td class="border p-2 font-medium">Air Panas</td><td class="border p-2">100</td><td class="border p-2">212</td><td class="border p-2">373.15</td><td class="border p-2">80</td></tr>
+          </tbody>
+        `,
+        analisis: [
+          "1. Mengapa indra peraba manusia tidak dapat dijadikan alat ukur suhu yang presisi?",
+          "2. Bagaimana perbandingan rasio skala antara Celsius, Reamur, Fahrenheit, dan Kelvin?",
+          "3. Pada suhu berapa angka skala Celsius dan Fahrenheit menunjukkan nilai yang sama?"
+        ],
+        quiz: [
+          { q: "Suatu benda diukur menggunakan termometer Celsius menunjukkan angka 40°C. Berapakah nilainya jika diukur dalam skala Fahrenheit?", options: ["A. 72°F", "B. 104°F", "C. 112°F", "D. 120°F"], ans: "B" },
+          { q: "Suhu nol mutlak (0 Kelvin) setara dengan...", options: ["A. 0°C", "B. -100°C", "C. -273°C", "D. -460°C"], ans: "C" }
+        ]
+      },
+      "2": {
+        title: "Pertemuan 2: Kalor & Perubahan Wujud",
+        coverTitle: "EKSPERIMEN KALOR, PERUBAHAN SUHU DAN WUJUD ZAT",
+        tujuan: [
+          "Menganalisis hubungan antara kalor (Q), massa (m), kalor jenis (c), dan perubahan suhu (ΔT).",
+          "Memahami grafik perubahan wujud zat saat menyerap kalor laten.",
+          "Menggunakan persamaan Q = m.c.ΔT dalam studi kasus virtual."
+        ],
+        orientasi: "Mengapa ketika dua benda berbeda jenis (misalnya air dan logam besi) dengan massa yang sama diberi energi kalor yang sama besar, kenaikan suhunya berbeda secara signifikan?",
+        mengamati: "Amati simulasi pemanasan bejana pada WebAR. Perhatikan kenaikan suhu dan perubahan kecepatan gerak partikel air saat energi heater ditingkatkan.",
+        controlsHTML: `
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-slate-300 mb-1">Pilih Bahan:</label>
+              <select id="p2-mat" onchange="runP2Calc()" class="w-full bg-slate-700 text-white rounded p-1">
+                <option value="4184">Air (c = 4184 J/kg°C)</option>
+                <option value="900">Aluminium (c = 900 J/kg°C)</option>
+                <option value="450">Besi (c = 450 J/kg°C)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-300 mb-1">Kalor (Q): <span id="p2-q-val" class="text-orange-400">10000 J</span></label>
+              <input type="range" id="p2-q" min="1000" max="50000" step="1000" value="10000" oninput="runP2Calc()" class="w-full accent-orange-400">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-slate-300 mb-1">Massa (m): <span id="p2-m-val" class="text-sky-400">500 g</span></label>
+              <input type="range" id="p2-m" min="100" max="1000" step="50" value="500" oninput="runP2Calc()" class="w-full accent-sky-400">
+            </div>
+            <div>
+              <label class="block text-slate-300 mb-1">Suhu Awal (T₀): <span id="p2-t0-val" class="text-emerald-400">25 °C</span></label>
+              <input type="range" id="p2-t0" min="0" max="80" value="25" oninput="runP2Calc()" class="w-full accent-emerald-400">
+            </div>
+          </div>
+          <div class="bg-slate-950 p-2 rounded flex justify-between font-mono text-[11px] border border-slate-700">
+            <div><span class="text-slate-400 block">ΔT (KENAIKAN)</span><span id="p2-dt" class="text-yellow-400 font-bold">+4.78 °C</span></div>
+            <div><span class="text-slate-400 block">SUHU AKHIR (T)</span><span id="p2-ta" class="text-orange-400 font-bold">29.78 °C</span></div>
+          </div>
+        `,
+        tableHeader: `
+          <thead class="bg-slate-100">
+            <tr>
+              <th class="border p-2">Bahan</th>
+              <th class="border p-2">Massa (g)</th>
+              <th class="border p-2">Kalor Q (J)</th>
+              <th class="border p-2">T₀ (°C)</th>
+              <th class="border p-2">T_akhir (°C)</th>
+              <th class="border p-2">ΔT (°C)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="border p-2 font-medium">Air</td><td class="border p-2">500</td><td class="border p-2">10000</td><td class="border p-2">25</td><td class="border p-2">29.78</td><td class="border p-2 font-bold text-sky-600">4.78</td></tr>
+            <tr><td class="border p-2 font-medium">Aluminium</td><td class="border p-2">500</td><td class="border p-2">10000</td><td class="border p-2">25</td><td class="border p-2">47.22</td><td class="border p-2 font-bold text-sky-600">22.22</td></tr>
+            <tr><td class="border p-2 font-medium">Besi</td><td class="border p-2">500</td><td class="border p-2">10000</td><td class="border p-2">25</td><td class="border p-2">69.44</td><td class="border p-2 font-bold text-sky-600">44.44</td></tr>
+          </tbody>
+        `,
+        analisis: [
+          "1. Bagaimana pengaruh besarnya massa benda terhadap kenaikan suhu jika diberikan kalor yang sama?",
+          "2. Mengapa bahan yang memiliki kalor jenis (c) kecil mengalami perubahan suhu lebih cepat?",
+          "3. Mengapa saat terjadi perubahan wujud (mencair/mendidih), suhu zat bernilai konstan?"
+        ],
+        quiz: [
+          { q: "Air bermassa 2 kg dipanaskan dari 20°C hingga 60°C. Jika c_air = 4200 J/kg°C, kalor yang dibutuhkan adalah...", options: ["A. 168 kJ", "B. 336 kJ", "C. 504 kJ", "D. 672 kJ"], ans: "B" },
+          { q: "Bahan A memiliki c = 900 J/kg°C dan B memiliki c = 450 J/kg°C. Jika diberi Q yang sama...", options: ["A. Kenaikan suhu A > B", "B. Kenaikan suhu B > A", "C. Kenaikan suhu A = B", "D. Tidak bisa ditentukan"], ans: "B" }
+        ]
+      },
+      "3": {
+        title: "Pertemuan 3: Perpindahan Kalor",
+        coverTitle: "EKSPLORASI MEKANISME PERPINDAHAN KALOR",
+        tujuan: [
+          "Membedakan mekanisme perpindahan kalor secara konduksi, konveksi, dan radiasi.",
+          "Menganalisis penerapannya dalam kehidupan sehari-hari (termos, radiator, panel surya).",
+          "Visualisasi arah aliran energi dan getaran partikel melalui WebAR."
+        ],
+        orientasi: "Mengapa ujung sendok logam terasa panas saat dipakai mengaduk teh panas, air mendidih berputar-putar di dalam panci, dan panas Matahari dapat sampai ke Bumi melewati ruang hampa udara?",
+        mengamati: "Pilih mode Konduksi, Konveksi, atau Radiasi pada panel WebAR untuk mengamati bagaimana kalor berpindah.",
+        controlsHTML: `
+          <div class="flex gap-2 mb-2">
+            <button onclick="setP3Mode('konduksi')" class="flex-1 py-1.5 bg-sky-600 text-white rounded font-bold">Konduksi</button>
+            <button onclick="setP3Mode('konveksi')" class="flex-1 py-1.5 bg-slate-700 text-white rounded font-bold">Konveksi</button>
+            <button onclick="setP3Mode('radiasi')" class="flex-1 py-1.5 bg-slate-700 text-white rounded font-bold">Radiasi</button>
+          </div>
+          <div class="bg-slate-950 p-3 rounded border border-slate-700">
+            <h4 id="p3-mode-title" class="font-bold text-sky-400">Mode: Konduksi (Batang Logam)</h4>
+            <p id="p3-mode-desc" class="text-[11px] text-slate-300 mt-1">Kalor merambat melalui getaran molekul zat padat tanpa perpindahan partikelnya.</p>
+          </div>
+        `,
+        tableHeader: `
+          <thead class="bg-slate-100">
+            <tr>
+              <th class="border p-2">No</th>
+              <th class="border p-2">Fenomena / Objek</th>
+              <th class="border p-2">Jenis Perpindahan</th>
+              <th class="border p-2">Medium Perantara</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="border p-2">1</td><td class="border p-2 font-medium">Batang Logam Dipanaskan</td><td class="border p-2">Konduksi</td><td class="border p-2">Zat Padat (Logam)</td></tr>
+            <tr><td class="border p-2">2</td><td class="border p-2 font-medium">Air Mendidih Berputar</td><td class="border p-2">Konveksi</td><td class="border p-2">Zat Cair (Fluida)</td></tr>
+            <tr><td class="border p-2">3</td><td class="border p-2 font-medium">Panas Matahari sampai ke Bumi</td><td class="border p-2">Radiasi</td><td class="border p-2">Tanpa Medium (Hampa)</td></tr>
+          </tbody>
+        `,
+        analisis: [
+          "1. Jelaskan perbedaan mendasar antara konduksi dan konveksi!",
+          "2. Mengapa radiasi dapat merambat di ruang hampa udara?",
+          "3. Bagaimana prinsip kerja dinding kaca berlapis perak pada termos dalam mencegah perpindahan kalor?"
+        ],
+        quiz: [
+          { q: "Perpindahan kalor yang disertai perpindahan partikel zat penentunya dinamakan...", options: ["A. Konduksi", "B. Konveksi", "C. Radiasi", "D. Evaporasi"], ans: "B" },
+          { q: "Gagang panci umumnya terbuat dari ebonit atau kayu karena bahan tersebut merupakan...", options: ["A. Konduktor baik", "B. Isolator baik", "C. Semikonduktor", "D. Radiator baik"], ans: "B" }
+        ]
+      }
+    };
+
+    // FUNGSI GANTI TAHAP STEP (PERPINDAHAN HALAMAN)
+    function goToStep(stepNum) {
+      currentStep = parseInt(stepNum);
+      
+      // Sembunyikan semua step, tampilkan yang dipilih
+      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+      const activeEl = document.getElementById(`step-${stepNum}`);
+      if (activeEl) activeEl.classList.add('active');
+
+      // Update style tombol sidebar
+      document.querySelectorAll('#sidebar-menu .sidebar-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-step') == stepNum) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    // FUNGSI SWITCH PERTEMUAN (PERTEMUAN 1, 2, 3)
+    function switchMeeting(mNum) {
+      currentMeeting = mNum;
+      const data = meetingData[mNum];
+
+      document.getElementById('sidebar-meeting-title').innerText = data.title;
+      document.getElementById('cover-title').innerText = data.coverTitle;
+      
+      // Update Tujuan
+      const tList = document.getElementById('tujuan-list');
+      tList.innerHTML = data.tujuan.map(t => `<li>${t}</li>`).join('');
+
+      // Update Orientasi & Mengamati
+      document.getElementById('orientasi-text').innerText = data.orientasi;
+      document.getElementById('mengamati-desc').innerText = data.mengamati;
+
+      // Update WebAR Controls & Table Data
+      document.getElementById('webar-controls').innerHTML = data.controlsHTML;
+      document.getElementById('table-data').innerHTML = data.tableHeader;
+
+      // Update Analisis
+      const aCont = document.getElementById('analisis-container');
+      aCont.innerHTML = data.analisis.map((q) => `
+        <div>
+          <label class="block font-semibold mb-1 text-slate-800">${q}</label>
+          <textarea class="w-full p-2 border rounded-lg text-xs outline-sky-500" rows="2" placeholder="Jawaban Anda..."></textarea>
+        </div>
+      `).join('');
+
+      // Update Quiz
+      const qCont = document.getElementById('quiz-container');
+      qCont.innerHTML = data.quiz.map((item, idx) => `
+        <div class="space-y-1">
+          <p class="font-bold">${idx + 1}. ${item.q}</p>
+          <div class="space-y-1 pl-2">
+            ${item.options.map(opt => `<label class="block cursor-pointer"><input type="radio" name="qz-${idx}" value="${opt[0]}"> ${opt}</label>`).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      goToStep(1);
+      if (mNum === "2") runP2Calc();
+    }
+
+    // SIMULASI THREE.JS WEBAR CANVAS
+    let scene, camera, renderer, 3dObj;
+    function initThree() {
+      const container = document.getElementById('webar-canvas-container');
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.set(0, 0, 5);
+
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      container.appendChild(renderer.domElement);
+
+      const geo = new THREE.CylinderGeometry(0.3, 0.3, 2, 16);
+      const mat = new THREE.MeshBasicMaterial({ color: 0x0284c7 });
+      3dObj = new THREE.Mesh(geo, mat);
+      scene.add(3dObj);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        if (3dObj) 3dObj.rotation.y += 0.01;
+        renderer.render(scene, camera);
+      }
+      animate();
+    }
+
+    // INTERAKSI P1, P2, P3
+    function updateP1Slider(val) {
+      document.getElementById('p1-val').innerText = `${val} °C`;
+      document.getElementById('disp-c').innerText = `${val} °C`;
+      document.getElementById('disp-f').innerText = `${((val * 9/5) + 32).toFixed(1)} °F`;
+      document.getElementById('disp-k').innerText = `${(parseFloat(val) + 273.15).toFixed(2)} K`;
+      document.getElementById('disp-r').innerText = `${(val * 4/5).toFixed(1)} °R`;
+    }
+
+    function updateP1Sample(val) {
+      document.getElementById('p1-slider').value = val;
+      updateP1Slider(val);
+    }
+
+    function runP2Calc() {
+      const c = parseFloat(document.getElementById('p2-mat').value);
+      const q = parseFloat(document.getElementById('p2-q').value);
+      const mGrams = parseFloat(document.getElementById('p2-m').value);
+      const t0 = parseFloat(document.getElementById('p2-t0').value);
+
+      const dT = q / ((mGrams / 1000) * c);
+      const tA = t0 + dT;
+
+      document.getElementById('p2-q-val').innerText = `${q} J`;
+      document.getElementById('p2-m-val').innerText = `${mGrams} g`;
+      document.getElementById('p2-t0-val').innerText = `${t0} °C`;
+      document.getElementById('p2-dt').innerText = `+${dT.toFixed(2)} °C`;
+      document.getElementById('p2-ta').innerText = `${tA.toFixed(2)} °C`;
+    }
+
+    function setP3Mode(mode) {
+      const title = document.getElementById('p3-mode-title');
+      const desc = document.getElementById('p3-mode-desc');
+      if (mode === 'konduksi') {
+        title.innerText = "Mode: Konduksi (Batang Logam)";
+        desc.innerText = "Kalor merambat melalui getaran molekul zat padat tanpa perpindahan partikelnya.";
+      } else if (mode === 'konveksi') {
+        title.innerText = "Mode: Konveksi (Arus Bejana)";
+        desc.innerText = "Fluida panas memuai, massa jenis mengecil dan bergerak naik digantikan fluida dingin.";
+      } else {
+        title.innerText = "Mode: Radiasi (Gelombang Elektromagnetik)";
+        desc.innerText = "Energi panas memancar dalam bentuk gelombang tanpa memerlukan perantara.";
+      }
+    }
+
+    function toggleARCamera() {
+      const video = document.getElementById('webar-video');
+      if (video.classList.contains('hidden')) {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+          .then(stream => {
+            video.srcObject = stream;
+            video.classList.remove('hidden');
+          }).catch(() => alert('Akses kamera tidak diizinkan.'));
+      } else {
+        video.classList.add('hidden');
+      }
+    }
+
+    function checkQuiz() {
+      const data = meetingData[currentMeeting].quiz;
+      let score = 0;
+      data.forEach((item, idx) => {
+        const sel = document.querySelector(`input[name="qz-${idx}"]:checked`)?.value;
+        if (sel === item.ans) score += 50;
+      });
+      const qRes = document.getElementById('quiz-score');
+      qRes.classList.remove('hidden');
+      qRes.innerText = `Skor Formatif Anda: ${score} / 100`;
+    }
+
+    function selectEmoji(emoji) {
+      alert(`Terima kasih atas refleksi emosi Anda ${emoji}`);
+    }
+
+    // INITIALIZATION & EVENT LISTENERS
+    window.onload = function() {
+      // Event Listener Sidebar Menu Click
+      document.querySelectorAll('#sidebar-menu .sidebar-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const step = this.getAttribute('data-step');
+          goToStep(step);
+        });
+      });
+
+      // Event Listener Select Pertemuan
+      document.getElementById('meeting-select').addEventListener('change', function() {
+        switchMeeting(this.value);
+      });
+
+      switchMeeting("1");
+      initThree();
+    };
+  </script>
+</body>
+</html>
